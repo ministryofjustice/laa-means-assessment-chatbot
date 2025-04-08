@@ -10,6 +10,9 @@ from app.main.forms import CookiesForm
 def index():
     return render_template("index.html")
 
+@bp.route("/start", methods=["GET"])
+def start():
+    return render_template("index.html")
 
 @bp.route("/accessibility", methods=["GET"])
 def accessibility():
