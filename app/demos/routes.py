@@ -9,6 +9,7 @@ import gradio as gr
 from transformers import pipeline
 import threading
 from gpt4all import GPT4All
+from app.demos.token_utils import count_tokens
 
 
 
@@ -39,17 +40,30 @@ def query(user_message, history):
         
      Chat history:
      """
-    
-    # Build chat history as a string
-    history_text = ""
-    for message in history:
-        role = "User" if message["role"] == "user" else "AI"
-        history_text += f"{role}: {message['content']}\n"
+    MAX_TOKENS = 3000  # Adjust depending on model's context window
+    system_prompt_tokens = count_tokens(system_prompt)
+    total_tokens = system_prompt_tokens
+    truncated_history = []
 
-    full_prompt = f"{system_prompt}\n{history_text}User: {user_message}\nAI:"
+    # Go through history from most recent to oldest
+    for message in reversed(history):
+        role = "User" if message["role"] == "user" else "AI"
+        content = f"{role}: {message['content']}\n"
+        tokens = count_tokens(content)
+
+        if total_tokens + tokens < MAX_TOKENS:
+            truncated_history.insert(0, content)
+            total_tokens += tokens
+        else:
+            break
+
+    # Rebuild prompt with recent history
+    history_text = "".join(truncated_history)
+    full_prompt = f"{system_prompt}\n{history_text}User: {input}\nAI:"
 
     with model.chat_session(system_prompt=system_prompt):
         response = model.generate(prompt=full_prompt, max_tokens=240)
+
     return response
 
 
