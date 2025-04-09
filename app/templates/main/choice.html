@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block beforeContent %}
+{{ super() }}
+<link rel="stylesheet" href="https://gradio.s3-us-west-2.amazonaws.com/2.6.2/static/bundle.css">
+{% endblock %}
+
+{% block content %}
+<main role="main" id="content" class="govuk-main-wrapper ">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ govukRadios({
+          'name': "chatbotOrForm",
+          'fieldset': {
+            'legend': {
+              'text': "How do you want to tell us about your legal problem and financial situation?",
+              'isPageHeading': true,
+              'classes': "govuk-fieldset__legend--l"
+            }
+          },
+          'hint': {
+            'text': "Both options have the end result assessed by a human caseworker."
+          },
+          'items': [
+            {
+              'value': "option1",
+              'text': "Talk to a Chatbot",
+              'hint': {
+                'text': "You\'ll be asked questions by Chatbot in a more informal way and you\'ll be able to ask for clarfication."
+             },
+            },
+            {
+              'value': "option2",
+              'text': "Fill in a form",
+               'hint': {
+                'text': "You can complete the same set of questions using a form. If you get stuck, you can ask a Chatbot for help completing the form."
+             }
+            },
+          ]
+        }) }}
+        {{ govukButton({
+          'text': "Save and continue",
+          'href': "chatbot"
+        }) }}
+    </div>
+  </div>
+</main>
+{% endblock %}

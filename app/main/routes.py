@@ -5,6 +5,8 @@ from werkzeug.exceptions import HTTPException
 from app.main import bp
 from app.main.forms import CookiesForm
 
+import gradio as gr
+
 
 @bp.route("/", methods=["GET"])
 def index():
@@ -12,7 +14,30 @@ def index():
 
 @bp.route("/start", methods=["GET"])
 def start():
-    return render_template("index.html")
+    return render_template("start.html")
+
+@bp.route("/choice", methods=["GET"])
+def choice():
+    return render_template("choice.html")
+
+@bp.route("/govuk-frontend", methods=["GET"])
+def govuk_frontend():
+    return render_template("govuk_frontend.html")
+
+@bp.route("/chatbot", methods=["GET"])
+def chatbot():
+
+    def greet(name, intensity):
+        return "Hello, " + name + "!" * int(intensity)
+
+    demo = gr.Interface(
+        fn=greet,
+        inputs=["text", "slider"],
+        outputs=["text"],
+    )
+
+    # demo.launch()
+    return render_template("chatbot.html")
 
 @bp.route("/accessibility", methods=["GET"])
 def accessibility():
