@@ -87,3 +87,7 @@ def autocomplete():
         flash("Demo form successfully submitted", "success")
         return redirect(url_for("demos.forms"))
     return render_template("autocomplete.html", form=form)
+
+@bp.route("/chatbot", methods=["GET"])
+def new_page():
+    return render_template("chatbot.html")

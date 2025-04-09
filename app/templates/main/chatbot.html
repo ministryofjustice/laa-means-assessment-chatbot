@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
+
+{% block pageTitle %}AI Chatbot – {{config['SERVICE_NAME']}} – GOV.UK{% endblock %}
+
+{% block beforeContent %}
+  {{ super() }}
+  {{ govukBackLink({
+    'text': "Back",
+    'href': url_for('main.index')
+  }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{ super() }}
+    <h1 class="govuk-heading-l">Welcome to the AI Chatbot</h1>
+    <p class="govuk-body">
+      This page provides access to an AI-powered chatbot designed to assist you with your queries.
+    </p>
+    <p class="govuk-body">
+      The chatbot can help you navigate the service, answer common questions, and provide guidance on using {{config['SERVICE_NAME']}}.
+    </p>
+    <p class="govuk-body">
+      Please note that the chatbot is here to assist you, but it may not always have the answers to complex or specific queries.
+    </p>
+    <p class="govuk-body">
+      To get started, simply interact with the chatbot below.
+    </p>
+  </div>
+</div>
+{% endblock %}
