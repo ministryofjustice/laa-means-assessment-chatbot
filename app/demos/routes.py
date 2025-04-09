@@ -61,7 +61,7 @@ chatbot_interface = gr.ChatInterface(
     theme="default",
     type="messages",
     chatbot = gr.Chatbot(
-        value=[{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi"}],
+        value=[{"role": "assistant", "content": "Hi I am a chatbot who can help you"}],
         label="Chatbot",
         type="messages"
     )
