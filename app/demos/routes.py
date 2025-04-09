@@ -1,7 +1,9 @@
 import os
+from platform import system
 
 import yaml
 from flask import flash, redirect, render_template, url_for, jsonify
+from gradio.themes.builder_app import history
 from werkzeug.exceptions import NotFound
 import gradio as gr
 from transformers import pipeline
@@ -24,26 +26,7 @@ from app.demos.forms import (
 model = GPT4All("Meta-Llama-3-8B-Instruct.Q4_0.gguf")
 chatbot_model = pipeline("text-generation", model="gpt2")
 
-def chat_with_ai(message, history):
-    """Function to handle chatbot interactions with new message format"""
-    # Format history using OpenAI-style messages
-    history_text = ""
-    for item in history:
-        role = item["role"].capitalize()
-        content = item["content"]
-        history_text += f"{role}: {content}\n"
-    
-    prompt = f"{history_text}User: {message}\nAI:"
-
-    # Generate response using GPT-2
-    response = chatbot_model(prompt, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
-
-    # Extract the AI response part
-    ai_response = response.split("AI:")[-1].strip()
-
-    return ai_response
-
-def query(input, _):
+def query(input, history):
     system_prompt = """Act as if you are a government official who needs 
     to determine the financial eligibility for legal aid, as defined in the
      Lord Chancellor's Guidance, for an application involving the user, for 
@@ -66,6 +49,8 @@ def query(input, _):
      Avoid legal jargon. 
 
      Don't mention the Lord Chancellor's Guidance by name. 
+     
+     Chat history:
      """
 
     with model.chat_session(system_prompt=system_prompt):
