@@ -35,6 +35,7 @@ Flask-WTF==1.2.2
 fsspec==2025.3.2
 govuk-frontend-jinja==3.5.0
 govuk-frontend-wtf==3.2.0
+gpt4all==2.8.2
 gradio==5.24.0
 gradio_client==1.8.0
 greenlet==3.1.1
