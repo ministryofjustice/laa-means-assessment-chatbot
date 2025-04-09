@@ -6,6 +6,8 @@ from werkzeug.exceptions import NotFound
 import gradio as gr
 from transformers import pipeline
 import threading
+from gpt4all import GPT4All
+
 
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,6 +21,7 @@ from app.demos.forms import (
     KitchenSinkForm,
 )
 
+model = GPT4All("Meta-Llama-3-8B-Instruct.Q4_0.gguf")
 chatbot_model = pipeline("text-generation", model="gpt2")
 
 def chat_with_ai(message, history):
@@ -40,10 +43,39 @@ def chat_with_ai(message, history):
 
     return ai_response
 
+def query(input):
+    system_prompt = """Act as if you are a government official who needs 
+    to determine the financial eligibility for legal aid, as defined in the
+     Lord Chancellor's Guidance, for an application involving the user, for 
+     legal aid. 
+
+     Obtain the information in a series of easy to understand questions. 
+     Start by checking which parts of the means assessment are relevant, based on 
+     the status of the applicant and their case. Then ask for the amounts of income 
+     and outgoings. Finally, give them an estimate of whether they would likely be 
+     eligible for legal aid or not based on the information they have provided. 
+
+     Ask one question at a time.
+
+     Make it clear that you are not a real person.
+
+     Do not give a definite eligibility result, just an estimate. 
+
+     Always say that the information will need to be reviewed by a caseworker who will make the final assessment. 
+
+     Avoid legal jargon. 
+
+     Don't mention the Lord Chancellor's Guidance by name. 
+     """
+
+    with model.chat_session(system_prompt=system_prompt):
+        return model.generate(prompt= input,
+                              max_tokens=240)
+
 
 # Create Gradio chatbot interface
 chatbot_interface = gr.ChatInterface(
-    fn=chat_with_ai,
+    fn=query,
     title="GOV.UK AI Assistant",
     description="Ask me any questions about this service.",
     theme="default",
