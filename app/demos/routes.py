@@ -1,8 +1,10 @@
 import os
 
 import yaml
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template, url_for, jsonify
 from werkzeug.exceptions import NotFound
+import gradio as gr
+from transformers import pipeline
 
 from app.demos import bp
 from app.demos.forms import (
@@ -13,6 +15,37 @@ from app.demos.forms import (
     KitchenSinkForm,
 )
 
+chatbot_model = pipeline("text-generation", model="gpt2")
+
+def chat_with_ai(message, history):
+    """Function to handle chatbot interactions with new message format"""
+    # Format history using OpenAI-style messages
+    history_text = ""
+    for item in history:
+        role = item["role"].capitalize()
+        content = item["content"]
+        history_text += f"{role}: {content}\n"
+    
+    prompt = f"{history_text}User: {message}\nAI:"
+
+    # Generate response using GPT-2
+    response = chatbot_model(prompt, max_length=100, num_return_sequences=1)[0]['generated_text']
+
+    # Extract the AI response part
+    ai_response = response.split("AI:")[-1].strip()
+
+    return ai_response
+
+
+# Create Gradio chatbot interface
+chatbot_interface = gr.ChatInterface(
+    fn=chat_with_ai,
+    title="GOV.UK AI Assistant",
+    description="Ask me any questions about this service.",
+    theme="default",
+    type="messages",
+    chatbot=gr.Chatbot(type="messages")
+)
 
 @bp.route("/components", methods=["GET"])
 def components():
@@ -91,3 +124,28 @@ def autocomplete():
 @bp.route("/chatbot", methods=["GET"])
 def new_page():
     return render_template("chatbot.html")
+
+@bp.route("/launch-chatbot", methods=["GET"])
+def launch_chatbot():
+    # This will be accessed via AJAX to start the Gradio server
+    port = 7860
+    
+    chatbot_interface.launch(
+        server_name="127.0.0.1",
+        server_port=7860,
+        share=False,
+        inbrowser=False,
+        prevent_thread_lock=True,
+        allowed_paths=["/"],  # optional, useful for restricting exposure
+        app_kwargs={
+            "headers": [
+                ("X-Frame-Options", "SAMEORIGIN"),
+            ]
+        }
+    )
+    
+    return jsonify({"status": "success", "port": port})
+    
+@bp.route("/chatbot-interface", methods=["GET"])
+def embed_chatbot():
+    return render_template("chatbot_embed.html")
