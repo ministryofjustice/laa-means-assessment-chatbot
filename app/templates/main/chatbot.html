@@ -47,20 +47,16 @@
 <script>
   // This script launches the Gradio server if it's not already running
   document.addEventListener('DOMContentLoaded', function() {
-    // Try to fetch from the Gradio server to see if it's running
     fetch('http://localhost:7860', { method: 'HEAD', mode: 'no-cors' })
       .then(function() {
-        // If we get here, the server is likely running
         console.log('Gradio server appears to be running');
       })
       .catch(function() {
-        // If we get here, the server is likely not running, so start it
         console.log('Gradio server does not appear to be running, launching...');
         fetch('{{ url_for("demos.launch_chatbot") }}')
           .then(response => response.json())
           .then(data => {
             console.log('Gradio server launch response:', data);
-            // Give the server a moment to start up
             setTimeout(function() {
               document.getElementById('chatbot-iframe').src = 'http://localhost:' + data.port;
             }, 3000);
