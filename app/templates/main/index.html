@@ -9,11 +9,40 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-l">Check if you are eligible for legal aid</h1>
-    <iframe
-      src="https://https://huggingface.co/spaces/NimaBoscarino/hotdog-gradio.hf.space"
-      width="850"
-      height="450"
-></iframe>
+      <div class="govuk-!-margin-top-6 govuk-!-margin-bottom-6">
+        <iframe 
+          id="chatbot-iframe"
+          src="http://localhost:7860"
+          class="gradio-chatbot"
+          frameborder="0" 
+          title="AI Chatbot Interface"
+          style="width: 100%; height: 700px;"
+      ></iframe>
+    </div>
   </div>
 </div>
+
+<script>
+  // This script launches the Gradio server if it's not already running
+  document.addEventListener('DOMContentLoaded', function() {
+    fetch('http://localhost:7860', { method: 'HEAD', mode: 'no-cors' })
+      .then(function() {
+        console.log('Gradio server appears to be running');
+      })
+      .catch(function() {
+        console.log('Gradio server does not appear to be running, launching...');
+        fetch('{{ url_for("demos.launch_chatbot") }}')
+          .then(response => response.json())
+          .then(data => {
+            console.log('Gradio server launch response:', data);
+            setTimeout(function() {
+              document.getElementById('chatbot-iframe').src = 'http://localhost:' + data.port;
+            }, 3000);
+          })
+          .catch(error => {
+            console.error('Error launching Gradio server:', error);
+          });
+      });
+  });
+</script>
 {% endblock %}
