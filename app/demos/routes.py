@@ -69,7 +69,7 @@ def query(input, _):
      """
 
     with model.chat_session(system_prompt=system_prompt):
-        return model.generate(prompt= input,
+        return model.generate(prompt=input,
                               max_tokens=240)
 
 
