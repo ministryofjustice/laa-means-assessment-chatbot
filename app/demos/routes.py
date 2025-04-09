@@ -34,7 +34,8 @@ def query(user_message, history):
 
      Obtain the information in a series of easy to understand questions. 
      Start by checking which parts of the means assessment are relevant, based on 
-     the status of the applicant and their case. Then ask for the amounts of income 
+     the status of the applicant and their case. Include questions about what welfare benefits 
+     they receieve from the Department of Work and Pensions. Then ask for the amounts of income 
      and outgoings. Finally, give them an estimate of whether they would likely be 
      eligible for legal aid or not based on the information they have provided. 
 
@@ -73,7 +74,11 @@ chatbot_interface = gr.ChatInterface(
     description="Ask me any questions about this service.",
     theme="default",
     type="messages",
-    chatbot=gr.Chatbot(type="messages")
+    chatbot = gr.Chatbot(
+        value=[{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi"}],
+        label="Chatbot",
+        type="messages"
+    )
 )
 
 @bp.route("/components", methods=["GET"])
