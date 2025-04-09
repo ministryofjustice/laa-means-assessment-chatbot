@@ -50,6 +50,7 @@ def create_app(config_class=Config):
             "*.google-analytics.com",
         ],
         "img-src": ["'self'", "*.googletagmanager.com", "www.gov.uk"],
+        "frame-src": ["'self'", "http://localhost:7860"],
     }
 
     # Set permissions policy

@@ -5,6 +5,10 @@ from flask import flash, redirect, render_template, url_for, jsonify
 from werkzeug.exceptions import NotFound
 import gradio as gr
 from transformers import pipeline
+import threading
+
+
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.demos import bp
 from app.demos.forms import (
@@ -125,26 +129,38 @@ def autocomplete():
 def new_page():
     return render_template("chatbot.html")
 
+gradio_thread = None  # Add this at the module level if needed
+
 @bp.route("/launch-chatbot", methods=["GET"])
 def launch_chatbot():
-    # This will be accessed via AJAX to start the Gradio server
-    port = 7860
-    
-    chatbot_interface.launch(
-        server_name="127.0.0.1",
-        server_port=7860,
-        share=False,
-        inbrowser=False,
-        prevent_thread_lock=True,
-        allowed_paths=["/"],  # optional, useful for restricting exposure
-        app_kwargs={
-            "headers": [
-                ("X-Frame-Options", "SAMEORIGIN"),
-            ]
-        }
-    )
-    
-    return jsonify({"status": "success", "port": port})
+    global gradio_thread
+
+    if gradio_thread and gradio_thread.is_alive():
+        print("Gradio already running.")
+        return jsonify({"status": "already running", "port": 7860})
+
+    def run_gradio():
+        chatbot_interface.launch(
+            server_name="0.0.0.0",
+            server_port=7860,
+            share=False,
+            inbrowser=False,
+            prevent_thread_lock=True,
+            quiet=True,
+            app_kwargs={
+                "headers": [
+                    ("X-Frame-Options", "ALLOWALL"),
+                    ("Access-Control-Allow-Origin", "*"),
+                ]
+            }
+        )
+
+    gradio_thread = threading.Thread(target=run_gradio)
+    gradio_thread.daemon = True  # Stops when Flask stops
+    gradio_thread.start()
+
+    print("Gradio chatbot launched.")
+    return jsonify({"status": "success", "port": 7860})
     
 @bp.route("/chatbot-interface", methods=["GET"])
 def embed_chatbot():
