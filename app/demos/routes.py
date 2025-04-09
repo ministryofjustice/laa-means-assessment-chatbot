@@ -33,7 +33,7 @@ def chat_with_ai(message, history):
     prompt = f"{history_text}User: {message}\nAI:"
 
     # Generate response using GPT-2
-    response = chatbot_model(prompt, max_length=100, num_return_sequences=1)[0]['generated_text']
+    response = chatbot_model(prompt, max_new_tokens=100, num_return_sequences=1)[0]['generated_text']
 
     # Extract the AI response part
     ai_response = response.split("AI:")[-1].strip()
@@ -129,7 +129,7 @@ def autocomplete():
 def new_page():
     return render_template("chatbot.html")
 
-gradio_thread = None  # Add this at the module level if needed
+gradio_thread = None
 
 @bp.route("/launch-chatbot", methods=["GET"])
 def launch_chatbot():
@@ -140,6 +140,11 @@ def launch_chatbot():
         return jsonify({"status": "already running", "port": 7860})
 
     def run_gradio():
+        import gradio as gr
+
+        # workaround for stop_event error
+        import logging
+        logging.getLogger("gradio").setLevel(logging.ERROR)
         chatbot_interface.launch(
             server_name="0.0.0.0",
             server_port=7860,
@@ -156,11 +161,12 @@ def launch_chatbot():
         )
 
     gradio_thread = threading.Thread(target=run_gradio)
-    gradio_thread.daemon = True  # Stops when Flask stops
+    gradio_thread.daemon = True
     gradio_thread.start()
 
     print("Gradio chatbot launched.")
     return jsonify({"status": "success", "port": 7860})
+
     
 @bp.route("/chatbot-interface", methods=["GET"])
 def embed_chatbot():
