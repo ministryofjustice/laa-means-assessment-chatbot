@@ -8,7 +8,7 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">Check if you are eligible for legal aid</h1>
+    <h1 class="govuk-heading-l">Check if you can get legal aid</h1>
     <iframe
       src="https://https://huggingface.co/spaces/NimaBoscarino/hotdog-gradio.hf.space"
       width="850"
@@ -16,4 +16,9 @@
 ></iframe>
   </div>
 </div>
+<div id="chatbot"></div>
+<script src="https://gradio.s3-us-west-2.amazonaws.com/2.6.2/static/bundle.js"></script>
+<script>
+  // launchGradioFromSpaces("abidlabs/question-answering", "#chatbot")
+</script>
 {% endblock %}
