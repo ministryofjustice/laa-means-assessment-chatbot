@@ -43,7 +43,7 @@ def chat_with_ai(message, history):
 
     return ai_response
 
-def query(input):
+def query(input, _):
     system_prompt = """Act as if you are a government official who needs 
     to determine the financial eligibility for legal aid, as defined in the
      Lord Chancellor's Guidance, for an application involving the user, for 
