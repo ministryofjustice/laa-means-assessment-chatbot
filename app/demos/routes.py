@@ -52,10 +52,18 @@ def query(input, history):
      
      Chat history:
      """
+    
+    # Build chat history as a string
+    history_text = ""
+    for message in history:
+        role = "User" if message["role"] == "user" else "AI"
+        history_text += f"{role}: {message['content']}\n"
+
+    full_prompt = f"{system_prompt}\n{history_text}User: {input}\nAI:"
 
     with model.chat_session(system_prompt=system_prompt):
-        return model.generate(prompt=input,
-                              max_tokens=240)
+        response = model.generate(prompt=full_prompt, max_tokens=240)
+    return response
 
 
 # Create Gradio chatbot interface
