@@ -105,6 +105,16 @@ Now you can browse: http://127.0.0.1:8000
 
 (The default port for flask apps is 5000, but on Macs this is often found to conflict with Apple's Airplay service, hence using another port here.)
 
+## Running Gradio for the chatbot
+Gradio is used to connect to an LLM and for this service we run it locally alongside the main app.
+
+After running:
+```
+flask --app app run --debug --port=8000
+```
+To get the app running. Visit http://localhost:8000/launch-chatbot and you should see a success message. You can visit localhost:7860 to see the standalone AI assistant and confirm it is running. Then you can go to the page:
+http://localhost:8000/chatbot and the AI assistant is visible in a frame within the chatbot service.
+
 ## Running in Docker
 
 For local development and deployments, run the below code:
