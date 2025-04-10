@@ -2,6 +2,7 @@ import os
 from platform import system
 
 import yaml
+from click import prompt
 from flask import flash, redirect, render_template, url_for, jsonify
 from gradio.themes.builder_app import history
 from werkzeug.exceptions import NotFound
@@ -49,14 +50,30 @@ def query(user_message, history):
      Avoid legal jargon. 
 
      Don't mention the Lord Chancellor's Guidance by name. 
-     
-     Chat history:
      """
+
+    chat_history = "Context:"
+
+    print(history)
+
+    for message in history:
+        chat_history += f"\n{message['role']}: {message['content']}"
+
+    system_prompt = chat_history + system_prompt
 
     with model.chat_session(system_prompt=system_prompt):
         return model.generate(prompt=user_message,
                               max_tokens=240)
 
+
+greeting_message = """Hello I'm Legal aid chatbot.
+
+I'm an experimental tool that uses AI to answer questions and help you find out if you are eligible for legal aid.
+
+At the end of the conversation I will give you a provisional result, then you can choose whether to make a legal aid application or not.
+
+To get started, what's your age?
+"""
 
 # Create Gradio chatbot interface
 chatbot_interface = gr.ChatInterface(
@@ -66,7 +83,7 @@ chatbot_interface = gr.ChatInterface(
     theme="default",
     type="messages",
     chatbot = gr.Chatbot(
-        value=[{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi"}],
+        value=[{"role": "assistant", "content": greeting_message}],
         label="Chatbot",
         type="messages"
     )
