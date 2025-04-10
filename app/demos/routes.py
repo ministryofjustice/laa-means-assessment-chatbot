@@ -26,7 +26,7 @@ from app.demos.forms import (
 model = GPT4All("Meta-Llama-3-8B-Instruct.Q4_0.gguf")
 chatbot_model = pipeline("text-generation", model="gpt2")
 
-def query(input, history):
+def query(user_message, history):
     system_prompt = """Act as if you are a government official who needs 
     to determine the financial eligibility for legal aid, as defined in the
      Lord Chancellor's Guidance, for an application involving the user, for 
@@ -54,7 +54,7 @@ def query(input, history):
      """
 
     with model.chat_session(system_prompt=system_prompt):
-        return model.generate(prompt=input,
+        return model.generate(prompt=user_message,
                               max_tokens=240)
 
 
