@@ -65,7 +65,11 @@ chatbot_interface = gr.ChatInterface(
     description="Ask me any questions about this service.",
     theme="default",
     type="messages",
-    chatbot=gr.Chatbot(type="messages")
+    chatbot = gr.Chatbot(
+        value=[{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi"}],
+        label="Chatbot",
+        type="messages"
+    )
 )
 
 @bp.route("/components", methods=["GET"])
