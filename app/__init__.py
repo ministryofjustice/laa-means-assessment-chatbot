@@ -7,15 +7,19 @@ from flask_wtf.csrf import CSRFProtect
 from govuk_frontend_wtf.main import WTFormsHelpers
 from jinja2 import ChoiceLoader, PackageLoader, PrefixLoader
 from app.helpers.static_helpers import get_hashed_filename
-
+from redis import Redis
+from flask_limiter.util import get_remote_address
+from flask_limiter import Limiter
 from app.config import Config
 
 compress = Compress()
 csrf = CSRFProtect()
 limiter = Limiter(
-    get_remote_address,
-    default_limits=["2 per second", "60 per minute"],
+    key_func=get_remote_address,
+    storage_uri="redis://localhost:6379",
+    default_limits=["2 per second", "60 per minute"]
 )
+
 talisman = Talisman()
 
 
