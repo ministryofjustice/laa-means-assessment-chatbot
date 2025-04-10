@@ -28,36 +28,30 @@ model = GPT4All("Meta-Llama-3-8B-Instruct.Q4_0.gguf")
 chatbot_model = pipeline("text-generation", model="gpt2")
 
 def query(user_message, history):
-    system_prompt = """Act as if you are a government official who needs 
-    to determine the financial eligibility for legal aid, as defined in the
+    system_prompt = """You are an artificial legal aid assistant. Please estimate financial eligibility for legal aid, as defined in the
      Lord Chancellor's Guidance, for an application involving the user, for 
-     legal aid. 
+     legal aid. Use the context above to keep track of what information the user has given you.
 
      Obtain the information in a series of easy to understand questions. 
      Start by checking which parts of the means assessment are relevant, based on 
      the status of the applicant and their case. Then ask for the amounts of income 
      and outgoings. Finally, give them an estimate of whether they would likely be 
-     eligible for legal aid or not based on the information they have provided. 
+     eligible for legal aid or not based on the information they have provided. Do not say definitively that they 
+     do or do not qualify for legal aid, but that a caseworker will need to review and make the final assessment.
 
-     Ask one question at a time.
+     Ask one question at a time. Do not repeat any questions.
 
-     Make it clear that you are not a real person.
+     Make it clear that you are not a real person, only once, at the start of the conversation.
 
-     Do not give a definite eligibility result, just an estimate. 
-
-     Always say that the information will need to be reviewed by a caseworker who will make the final assessment. 
-
-     Avoid legal jargon. 
+     Avoid legal jargon, make sure to use clear english
 
      Don't mention the Lord Chancellor's Guidance by name. 
      """
 
-    chat_history = "Context:"
-
-    print(history)
+    chat_history = "Context:\n"
 
     for message in history:
-        chat_history += f"\n{message['role']}: {message['content']}"
+        chat_history += f"{message['role']}: {message['content']}\n"
 
     system_prompt = chat_history + system_prompt
 
