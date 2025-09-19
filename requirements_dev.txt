@@ -6,7 +6,7 @@
 #
 attrs==24.3.0
 bandit==1.8.2
-black==24.10.0
+black==25.9.0
 blinker==1.9.0
 boolean-py==4.0
 brotli==1.1.0
@@ -80,6 +80,7 @@ pytest-cov==6.0.0
 pytest-playwright==0.6.2
 python-dotenv==1.0.1
 python-slugify==8.0.4
+pytokens==0.1.10
 pyyaml==6.0.2
 requests==2.32.3
 rich==13.9.4
