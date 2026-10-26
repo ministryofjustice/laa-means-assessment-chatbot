@@ -6,7 +6,7 @@ bandit==1.8.3
 black==25.1.0
 blinker==1.9.0
 boolean.py==5.0
-Brotli==1.1.0
+Brotli==1.2.1
 build==1.2.2.post1
 CacheControl==0.14.2
 certifi==2025.1.31
